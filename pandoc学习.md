@@ -64,7 +64,7 @@ pandoc input.txt -o output.html
 
 
 
-生成包含适当页眉和页脚的输出（例如独立的 HTML、LaTeX、TEI 或 RTF 文件，而不是片段）。此选项对于 pdf、epub、epub3、fb2、docx 和 odt 输出会自动设置。对于原生输出，此选项会导致包含元数据；否则，将抑制元数据。
+生成包含包含完整的文档头和尾，以及适当页眉和页脚的输出（例如独立的 HTML、LaTeX、TEI 或 RTF 文件，而不是片段）。此选项对于 pdf、epub、epub3、fb2、docx 和 odt 输出会自动设置。对于原生输出，此选项会导致包含元数据；否则，将抑制元数据。
 
 # 处理标准输入输出
 
@@ -111,11 +111,13 @@ pandoc input.md -o output.html --extract-media=media
 
 
 
+--extract-media=PATH：指定提取媒体文件（如图片和音频）的路径。
+
 在这个命令中，`--extract-media=media` 选项告诉Pandoc将所有媒体文件提取到名为 `media` 的目录中，并在输出文档中引用这些文件。
 
 ---
 
-
+pandoc -f https://www.jetbrains.com/zh-cn/ides/?language=go#choose-your-ide -t commonmark-raw_html -o pandoc.md --extract-media=media
 
 ## 2. 转换参考文献
 
@@ -137,9 +139,10 @@ pandoc --citeproc --bibliography=test.bib -M reference-section-title="参考文�
 这里解释一下这些参数：
 
 - --citeproc：处理文献引用，这样才能识别文中的`[@]`的cite key，也可以使用`-C`代替；
-- --bibliography：`bib`文件的路径，这里因为已经`cd`到了`test.bib`文件所在的目录下，所以直接使用了文件名；
+- --bibliography：指定BibTeX文件的名称和路径，这里因为已经`cd`到了`test.bib`文件所在的目录下，所以直接使用了文件名；
 - -o：output，导出命令；
 - -M reference-section-title="参考文献"：设置参考文献表的标题为「参考文献」，不编号
+- --csl=`FILENAME`：指定Citation Style Language(CSL)样式文件的名称和路径，用于生成参考文献的格式。
 
 ---
 
@@ -158,7 +161,7 @@ pandoc --citeproc --bibliography=test.bib -M reference-section-title="参考文�
 
 ### 3.2. 表格引用
 
-表格的引用和图片几乎一样，只是把`{#fig:id}`中的`fig`改为了`tbl`，其它都是一样的。
+表格的引用和图片几乎一样，只是把`{#fig:id}`中的`fig`改为了`tbl`，并且`{#fig:id}`要与`表格alt`间空一个空格，其它都是一样的。
 
 ### 3.3. 图表按章节引用
 
@@ -174,15 +177,42 @@ pandoc --filter pandoc-crossref -M chapters input.md -o output.docx
 
 
 
-**完整命令样式如下：**
+**带有参考文献和交叉引用的转word完整命令样式如下：**
 
 ```shell
 pandoc --filter pandoc-crossref --citeproc --bibliography=myref.bib -M reference-section-title="参考文献" --csl=chinese-gb7714-2005-numeric.csl -s demo-figref.md -o demo-figref.docx
 ```
 
-转为word时使用特定模版
+**转为word时使用特定模版**
 
 ```shell
 --reference-doc templates.docx
 ```
+
+
+
+---
+
+## 4. 增加YAML信息，添加元数据
+
+YAML：在markdown文件头部，用两行`---`包裹起来，用来设置metadata。
+
+```
+---
+title: "xxx"
+author:
+-Author One
+-Author Two
+abstract: xxxxxx
+
+chapters: true
+figureTitle: "图"
+figPrefix: "图"
+//figLabels: roman
+tableTitle: "表"
+tblPrefix: "表"
+---
+```
+
+
 
